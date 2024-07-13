@@ -1,0 +1,129 @@
+<html lang="ja">
+  <head>
+    <link rel="stylesheet" href="./style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Konofan Physics</title>
+  </head>
+
+  <body
+    onload="(function resizeWindow() { const cw = container.clientWidth; boundsScale.x = cw / render.options.width; boundsScale.y = boundsScale.x; canvas.style.width = render.options.width * boundsScale.x; canvas.style.height = render.options.height * boundsScale.y; })();"
+  >
+    <iframe
+      src="../tmp/wav/Konosuba Fantastic Main Menu2.wav"
+      allow="autoplay"
+      id="audio"
+      style="display: none"
+    ></iframe>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      data-prefix="fas"
+      data-icon="sleigh"
+      role="img"
+    >
+      <path
+        fill="#D9D9D9"
+        d="m54.858.225 43.77 13.517 21.144 40.029-13.871 43.092-40.759 20.912-43.77-13.517L.227 64.229 14.1 21.137 54.858.225Z"
+      />
+    </svg>
+
+    <div class="content-area">
+      <div class="content-inner">
+        <!-- matter.js用canvas  -->
+           <div id="box">
+            <video width="1280" muted autoplay loop><source src="./img/movie.mp4"></video>
+          </div>
+        <div class="canvas-container" id="js__canvas-container">
+
+          <canvas class="canvas" id="js__canvas"></canvas>
+
+        </div>
+      </div>
+    </div>
+    <script>
+      function init() {
+
+        const cw = container.clientWidth;
+
+        boundsScale.x = cw / render.options.width;
+        boundsScale.y = boundsScale.x; 
+
+        canvas.style.width = render.options.width * boundsScale.x; 
+        canvas.style.height = render.options.height * boundsScale.y; 
+      }
+    </script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script> -->
+    <script src="./pathseg.min.js"></script>
+    <script src="./decomp.min.js"></script>
+    <script src="./particle.js"></script>
+    <script src="./matter.min.js"></script>
+    <script src="./main.js"></script>
+
+    <script>
+      window.addEventListener("load", (event) => {
+        new fairyDustCursor();
+      });
+    </script>
+    <script>
+
+      const ballComposite2 = Composite.create();
+      Composite.add(engine.world, ballComposite2);
+
+      Events.on(mouseConstraint, "mousedown", (e) => {
+        // ドラッグ中は生成しない
+        if (mouseConstraint.body) {
+          return;
+        }
+
+        [...document.querySelectorAll("svg path")].map((path) => {
+          for (i = 0; i <= 10; i++) {
+            const min = 10;
+            const max = 25;
+            const radius = Math.random() * (max - min) + min;
+            const body = Matter.Bodies.fromVertices(
+              e.mouse.position.x + radius + radius,
+              e.mouse.position.y + radius,
+              Matter.Svg.pathToVertices(path),
+              {
+                render: {
+                  strokeStyle: "#ffffff",
+                  sprite: {
+                    texture: "./img/q.png",
+                    xScale: radius / 50,
+                    yScale: radius / 50,
+                  },
+                },
+              },
+              true
+            );
+            Matter.Body.scale(body, radius / 50, radius / 50);
+            Matter.Composite.add(ballComposite2, body);
+          }
+        });
+      });
+    </script>
+    <script>
+      const min = 10;
+      const max = 20;
+      
+      let stack = Matter.Composites.stack(8, 8, 5, 3, 0, 0, function (x, y) {
+        let radius = Math.random() * (max - min) + min;
+        return Bodies.polygon(700, 250, radius,radius, {
+          label: "bodyA",
+          render: {
+            strokeStyle: "#ffffff",
+            sprite: {
+              texture: "./img/q.png",
+              xScale: radius / 55,
+              yScale: radius / 55,
+            },
+          },
+        });
+      });
+      Composite.add(engine.world, stack);
+    </script>
+  </body>
+</html>
